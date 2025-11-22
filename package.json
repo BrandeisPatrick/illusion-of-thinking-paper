@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:api": "npx tsx dev-server.ts",
     "dev:vercel": "vercel dev",
     "build": "vite build",
     "preview": "vite preview",
@@ -19,9 +20,14 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.5",
     "@types/node": "^22.14.0",
     "@vercel/node": "^5.5.9",
     "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.22",
+    "express": "^5.1.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18",
     "typescript": "~5.8.2",
     "vercel": "^48.10.10",
     "vite": "^6.2.0"

@@ -8,8 +8,8 @@ import { solveTowerOfHanoi } from './services/openAiService';
 
 // OpenAI models with reasoning_effort support (toggle high/minimal)
 const AI_MODELS = [
-  { id: 'gpt-5-nano', name: 'GPT-5 Nano (Reasoning Toggle)' },
-  { id: 'gpt-5-mini', name: 'GPT-5 Mini (Reasoning Toggle)' },
+  { id: 'gpt-5-nano', name: 'GPT-5 Nano' },
+  { id: 'gpt-5-mini', name: 'GPT-5 Mini' },
 ];
 
 const DIFFICULTIES = [
