@@ -10,7 +10,9 @@
       "WebFetch(domain:openrouter.ai)",
       "Bash(npx tsx:*)",
       "WebFetch(domain:platform.openai.com)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

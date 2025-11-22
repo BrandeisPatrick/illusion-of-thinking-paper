@@ -4,9 +4,9 @@ import { fileURLToPath } from 'url';
 
 // Load environment variables
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.join(__dirname, '.env.local') });
+dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
 
-import { solveTowerOfHanoi } from './services/openAiService';
+import { solveTowerOfHanoi } from '../src/services/openAiService';
 
 // Test configurations
 const models = [
