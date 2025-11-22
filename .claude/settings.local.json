@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm run dev:*)",
+      "WebSearch",
+      "WebFetch(domain:console.groq.com)",
+      "WebFetch(domain:groq.com)",
+      "Bash(npm install:*)",
+      "WebFetch(domain:openrouter.ai)",
+      "Bash(npx tsx:*)",
+      "WebFetch(domain:platform.openai.com)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

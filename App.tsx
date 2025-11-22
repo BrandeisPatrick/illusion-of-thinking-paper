@@ -4,12 +4,11 @@ import { Trophy } from 'lucide-react';
 import { RodComponent } from './components/RodComponent';
 import { createInitialState, canMoveDisk, checkWinCondition } from './utils/gameLogic';
 import { GameState, RodId, Move } from './types';
-import { solveTowerOfHanoi } from './services/geminiService';
+import { solveTowerOfHanoi } from './services/openAiService';
 
-// Updated to use currently supported models
+// OpenAI models with reasoning_effort support (toggle high/minimal)
 const AI_MODELS = [
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-  { id: 'gemini-3-pro-preview', name: 'Gemini 3.0 Pro' },
+  { id: 'gpt-5-mini', name: 'GPT-5 Mini (Reasoning Toggle)' },
 ];
 
 const DIFFICULTIES = [
@@ -31,8 +30,8 @@ const App: React.FC = () => {
   
   // AI Configuration
   const [selectedModel, setSelectedModel] = useState<string>(AI_MODELS[0].id);
-  // Thinking enabled by default for compatible models
-  const [useReasoning, setUseReasoning] = useState<boolean>(true);
+  // Thinking disabled by default
+  const [useReasoning, setUseReasoning] = useState<boolean>(false);
   const [isSolving, setIsSolving] = useState(false);
   const [solutionQueue, setSolutionQueue] = useState<Move[]>([]);
   const [isThinking, setIsThinking] = useState(false);
@@ -164,9 +163,8 @@ const App: React.FC = () => {
     
     setIsThinking(true);
     try {
-      // Pass only diskCount, model, and reasoning boolean.
-      // The service handles the max budget automatically.
-      const moves = await solveTowerOfHanoi(gameState.diskCount, selectedModel, useReasoning);
+      // Pass diskCount, useReasoning, and model ID to the service
+      const moves = await solveTowerOfHanoi(gameState.diskCount, useReasoning, selectedModel);
       setSolutionQueue(moves);
       setIsSolving(true);
     } catch (e) {
@@ -178,8 +176,8 @@ const App: React.FC = () => {
   };
 
   const supportsThinking = (model: string) => {
-    // Supports thinking if it is a 2.5 series model or explicitly 3-pro
-    return model.includes('2.5') || model.includes('3-pro');
+    // All OpenRouter free models support reasoning/thinking
+    return true;
   };
 
   const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
