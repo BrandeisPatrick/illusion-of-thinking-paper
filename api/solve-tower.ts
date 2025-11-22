@@ -33,11 +33,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Initialize OpenAI client (no dangerouslyAllowBrowser needed on server)
     const client = new OpenAI({ apiKey });
 
-    const prompt = `Solve Tower of Hanoi with ${numDisks} disks on rods 0,1,2. Start on rod 0, end on rod 2. Return only moves as:
+    const prompt = `Solve the Tower of Hanoi puzzle with ${numDisks} disks.
+
+IMPORTANT CONSTRAINTS:
+- There are exactly 3 rods numbered: 0, 1, and 2
+- All disks start on rod 0
+- Goal: Move all disks to rod 2
+- You can only use rods 0, 1, or 2 (no other rod numbers exist)
+
+Return ONLY the moves, one per line, in this exact format:
 0→2
 0→1
 2→1
-etc.`;
+
+Do not use any rod numbers other than 0, 1, or 2.`;
 
     // Check if this is a GPT-5 model (supports reasoning_effort)
     const isGPT5 = modelId.includes('gpt-5');
