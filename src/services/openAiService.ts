@@ -1,12 +1,21 @@
 // Frontend service - calls our secure backend API instead of OpenAI directly
 
 interface Move {
-  from: number;
-  to: number;
+  from: string;
+  to: string;
+}
+
+interface Usage {
+  totalTokens: number;
+  reasoningTokens: number;
+  inferenceTimeMs: number;
 }
 
 interface SolutionResponse {
   moves: Move[];
+  usage: Usage;
+  modelName: string;
+  rawResponse: string;
 }
 
 export async function solveTowerOfHanoi(

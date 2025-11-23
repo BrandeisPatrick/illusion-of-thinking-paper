@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Trophy } from 'lucide-react';
+import { CheckCircle, XCircle } from 'lucide-react';
 import { RodComponent } from './components/RodComponent';
 import { createInitialState, canMoveDisk, checkWinCondition } from './utils/gameLogic';
 import { GameState, RodId, Move } from './types';
@@ -37,6 +37,16 @@ const App: React.FC = () => {
   const [solutionQueue, setSolutionQueue] = useState<Move[]>([]);
   const [isThinking, setIsThinking] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(400); // Default 2x
+  const [solveStats, setSolveStats] = useState<{
+    totalTokens: number;
+    reasoningTokens: number;
+    inferenceTimeMs: number;
+    modelName: string;
+    movesGenerated: number;
+    moves: Move[];
+  } | null>(null);
+  const [hasFailed, setHasFailed] = useState(false);
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
 
   // Rod Labels
   const rodLabels: Record<RodId, string> = {
@@ -63,22 +73,29 @@ const App: React.FC = () => {
 
     if (isSolving && solutionQueue.length > 0) {
       playInterval = setInterval(() => {
-        const currentQueue = [...solutionQueue];
-        const nextMove = currentQueue.shift();
+        setSolutionQueue(prevQueue => {
+          if (prevQueue.length === 0) {
+            setIsSolving(false);
+            return prevQueue;
+          }
 
-        if (nextMove) {
+          const nextMove = prevQueue[0];
           executeMove(nextMove.from, nextMove.to);
-          setSolutionQueue(currentQueue);
-        } else {
-          setIsSolving(false);
-        }
+          return prevQueue.slice(1);
+        });
       }, playbackSpeed); // Use dynamic speed
     } else if (isSolving && solutionQueue.length === 0) {
        setIsSolving(false);
+       // Check if puzzle was actually solved after animation completes
+       setTimeout(() => {
+         if (!gameState.isComplete) {
+           setHasFailed(true);
+         }
+       }, 100);
     }
 
     return () => clearInterval(playInterval);
-  }, [isSolving, solutionQueue, gameState, playbackSpeed]);
+  }, [isSolving, solutionQueue.length, playbackSpeed, gameState.isComplete]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -94,6 +111,9 @@ const App: React.FC = () => {
     setIsSolving(false);
     setSolutionQueue([]);
     setIsThinking(false);
+    setSolveStats(null);
+    setHasFailed(false);
+    setAiResponse(null);
   };
 
   // Execute a move programmatically or manually
@@ -167,6 +187,15 @@ const App: React.FC = () => {
       // Pass diskCount, useReasoning, and model ID to the service
       const response = await solveTowerOfHanoi(gameState.diskCount, useReasoning, selectedModel);
       setSolutionQueue(response.moves);
+      setSolveStats({
+        totalTokens: response.usage.totalTokens,
+        reasoningTokens: response.usage.reasoningTokens,
+        inferenceTimeMs: response.usage.inferenceTimeMs,
+        modelName: response.modelName,
+        movesGenerated: response.moves.length,
+        moves: response.moves
+      });
+      setAiResponse(response.rawResponse);
       setIsSolving(true);
     } catch (e) {
       console.error(e);
@@ -309,6 +338,26 @@ const App: React.FC = () => {
         </div>
       </div>
 
+      {/* AI Response Window */}
+      <div className="w-full max-w-3xl mb-4">
+        <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] rounded-xl overflow-hidden">
+          <div className="bg-gray-100 border-b-2 border-black px-3 py-2">
+            <h3 className="text-xs sm:text-sm font-bold uppercase">AI Response</h3>
+          </div>
+          <div className="p-3 max-h-48 overflow-y-auto bg-white">
+            {aiResponse ? (
+              <pre className="text-xs sm:text-sm font-mono whitespace-pre-wrap break-words text-gray-800">
+                {aiResponse}
+              </pre>
+            ) : (
+              <p className="text-xs sm:text-sm text-gray-600 italic">
+                Click "AUTO SOLVE" to see the AI's response here...
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Game Board */}
       <div className="relative w-full max-w-3xl border-4 border-black p-4 sm:p-8 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-2xl">
         
@@ -348,20 +397,40 @@ const App: React.FC = () => {
           ))}
         </div>
 
-        {/* Win Overlay */}
-        {gameState.isComplete && (
-          <div className="absolute inset-0 bg-white/90 z-30 flex flex-col items-center justify-center animate-in fade-in duration-300 rounded-xl">
-            <Trophy size={64} className="text-yellow-500 mb-4 drop-shadow-lg animate-bounce" />
-            <h2 className="text-2xl sm:text-4xl font-bold mb-2 text-center">LEVEL CLEARED!</h2>
-            <p className="text-base sm:text-xl mb-6">
-              {gameState.diskCount} Disks in {gameState.moveCount} Moves
+        {/* Results Overlay */}
+        {(gameState.isComplete || hasFailed) && solveStats && (
+          <div className="absolute inset-0 bg-white/95 z-30 flex flex-col items-center justify-center animate-in fade-in duration-300 rounded-xl p-4">
+            {gameState.isComplete ? (
+              <CheckCircle size={48} className="text-green-500 mb-3" />
+            ) : (
+              <XCircle size={48} className="text-red-500 mb-3" />
+            )}
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center">
+              {gameState.isComplete ? 'SUCCESS!' : 'FAILED!'}
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600 mb-4">
+              {solveStats.modelName}
             </p>
-            <button 
-              onClick={() => resetGame()}
-              className="bg-black text-white px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-bold border-2 border-transparent hover:bg-gray-800 hover:scale-105 transition-all shadow-[4px_4px_0px_0px_#666] rounded-xl"
-            >
-              PLAY AGAIN
-            </button>
+
+            {/* Stats Grid */}
+            <div className="bg-gray-50 border-2 border-black rounded-lg p-4 font-mono text-sm sm:text-base w-full max-w-sm">
+              <div className="flex justify-between mb-2">
+                <span className="font-bold">Total Tokens:</span>
+                <span>{solveStats.totalTokens.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="font-bold">Time:</span>
+                <span>{(solveStats.inferenceTimeMs / 1000).toFixed(2)}s</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="font-bold">Reasoning Tokens:</span>
+                <span>{solveStats.reasoningTokens.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-bold">Moves Generated:</span>
+                <span>{solveStats.movesGenerated}</span>
+              </div>
+            </div>
           </div>
         )}
       </div>

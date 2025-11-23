@@ -2,8 +2,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import OpenAI from 'openai';
 
 interface Move {
-  from: number;
-  to: number;
+  from: string;
+  to: string;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -36,17 +36,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const prompt = `Solve the Tower of Hanoi puzzle with ${numDisks} disks.
 
 IMPORTANT CONSTRAINTS:
-- There are exactly 3 rods numbered: 0, 1, and 2
-- All disks start on rod 0
-- Goal: Move all disks to rod 2
-- You can only use rods 0, 1, or 2 (no other rod numbers exist)
+- There are exactly 3 rods labeled: A, B, and C
+- All disks start on rod A
+- Goal: Move all disks to rod C
+- You can only use rods A, B, or C (no other rod labels exist)
 
 Return ONLY the moves, one per line, in this exact format:
-0→2
-0→1
-2→1
+A→C
+A→B
+C→B
 
-Do not use any rod numbers other than 0, 1, or 2.`;
+Do not use any rod labels other than A, B, or C.`;
 
     // Check if this is a GPT-5 model (supports reasoning_effort)
     const isGPT5 = modelId.includes('gpt-5');
@@ -70,7 +70,9 @@ Do not use any rod numbers other than 0, 1, or 2.`;
       params.temperature = 0.7;
     }
 
+    const startTime = Date.now();
     const response = await client.chat.completions.create(params);
+    const inferenceTimeMs = Date.now() - startTime;
 
     const content = response.choices[0].message.content;
     if (!content) {
@@ -82,22 +84,34 @@ Do not use any rod numbers other than 0, 1, or 2.`;
     const lines = content.split('\n');
 
     for (const line of lines) {
-      // Match patterns like "0→2" or "0 → 2" or "0->2"
-      const match = line.match(/(\d)\s*(?:[→>-]|-?>)\s*(\d)/);
+      // Match patterns like "A→C" or "A → C" or "A->C"
+      const match = line.match(/([ABC])\s*(?:[→>-]|-?>)\s*([ABC])/);
       if (match) {
-        const from = parseInt(match[1], 10);
-        const to = parseInt(match[2], 10);
+        const from = match[1];
+        const to = match[2];
 
-        // Validate rod numbers
-        if (from < 0 || from > 2 || to < 0 || to > 2) {
-          throw new Error(`Invalid rod number in move: ${from}→${to}`);
+        // Validate rod labels
+        if (!['A', 'B', 'C'].includes(from) || !['A', 'B', 'C'].includes(to)) {
+          throw new Error(`Invalid rod label in move: ${from}→${to}`);
         }
 
         moves.push({ from, to });
       }
     }
 
-    return res.status(200).json({ moves });
+    // Extract usage stats from OpenAI response
+    const usage = {
+      totalTokens: response.usage?.total_tokens || 0,
+      reasoningTokens: response.usage?.completion_tokens_details?.reasoning_tokens || 0,
+      inferenceTimeMs
+    };
+
+    return res.status(200).json({
+      moves,
+      usage,
+      modelName: modelId,
+      rawResponse: content
+    });
   } catch (error: any) {
     console.error('Error solving Tower of Hanoi:', error);
     return res.status(500).json({
