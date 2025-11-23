@@ -165,8 +165,8 @@ const App: React.FC = () => {
     setIsThinking(true);
     try {
       // Pass diskCount, useReasoning, and model ID to the service
-      const moves = await solveTowerOfHanoi(gameState.diskCount, useReasoning, selectedModel);
-      setSolutionQueue(moves);
+      const response = await solveTowerOfHanoi(gameState.diskCount, useReasoning, selectedModel);
+      setSolutionQueue(response.moves);
       setIsSolving(true);
     } catch (e) {
       console.error(e);
