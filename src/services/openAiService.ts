@@ -19,11 +19,21 @@ interface SolutionResponse {
   prompt: string;
 }
 
+// Global flag to prevent concurrent API calls
+let isRequestInProgress = false;
+
 export async function solveTowerOfHanoi(
   numDisks: number,
   useReasoning: boolean,
   modelId: string
 ): Promise<SolutionResponse> {
+  // Service-level protection: prevent concurrent API calls
+  if (isRequestInProgress) {
+    throw new Error('A puzzle is already being solved. Please wait for it to finish.');
+  }
+
+  isRequestInProgress = true;
+
   // Call our backend API endpoint instead of OpenAI directly
   // This keeps the API key secure on the server
 
@@ -58,5 +68,6 @@ export async function solveTowerOfHanoi(
     throw error;
   } finally {
     clearTimeout(timeoutId);
+    isRequestInProgress = false;
   }
 }

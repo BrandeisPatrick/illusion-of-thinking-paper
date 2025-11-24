@@ -47,6 +47,7 @@ const App: React.FC = () => {
   } | null>(null);
   const [hasFailed, setHasFailed] = useState(false);
   const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState<string | null>(null);
 
   // Rod Labels
   const rodLabels: Record<RodId, string> = {
@@ -168,22 +169,28 @@ const App: React.FC = () => {
   };
 
   const handleAutoSolve = async () => {
-    if (gameState.isComplete) return;
-    
-    const confirmReset = hasStarted && gameState.moveCount > 0 
-      ? window.confirm("Auto-solving requires restarting the board. Continue?") 
+    // Prevent multiple simultaneous API calls
+    if (gameState.isComplete || isSolving || isThinking) return;
+
+    // Set thinking immediately to disable button and prevent multiple calls
+    setIsThinking(true);
+
+    const confirmReset = hasStarted && gameState.moveCount > 0
+      ? window.confirm("Auto-solving requires restarting the board. Continue?")
       : true;
 
-    if (!confirmReset) return;
+    if (!confirmReset) {
+      setIsThinking(false);
+      return;
+    }
 
-    // Reset board logic inside here to be safe
-    const freshState = createInitialState(gameState.diskCount);
-    setGameState(freshState);
-    setTimer(0);
-    setHasStarted(true);
-    
-    setIsThinking(true);
     try {
+      // Reset board logic inside here to be safe
+      const freshState = createInitialState(gameState.diskCount);
+      setGameState(freshState);
+      setTimer(0);
+      setHasStarted(true);
+
       // Pass diskCount, useReasoning, and model ID to the service
       const response = await solveTowerOfHanoi(gameState.diskCount, useReasoning, selectedModel);
       setSolutionQueue(response.moves);
@@ -196,6 +203,7 @@ const App: React.FC = () => {
         moves: response.moves
       });
       setAiResponse(response.rawResponse);
+      setPrompt(response.prompt);
       setIsSolving(true);
     } catch (e) {
       console.error(e);
@@ -220,7 +228,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black flex flex-col items-center py-2 px-2 sm:py-4 sm:px-4 selection:bg-yellow-200">
+    <div className="min-h-screen bg-white text-black flex flex-col items-center py-8 px-2 sm:py-12 sm:px-4 selection:bg-yellow-200">
       
       {/* Compact Header for Mobile */}
       <header className="w-full max-w-3xl flex flex-row justify-between items-center mb-2 gap-2 border-b-4 border-black pb-2 sm:mb-6 sm:pb-6">
@@ -338,20 +346,33 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Response Window */}
+      {/* AI Response Window - Chat Interface */}
       <div className="w-full max-w-3xl mb-4">
         <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] rounded-xl overflow-hidden">
           <div className="bg-gray-100 border-b-2 border-black px-3 py-2">
-            <h3 className="text-xs sm:text-sm font-bold uppercase">AI Response</h3>
+            <h3 className="text-xs sm:text-sm font-bold uppercase">AI Conversation</h3>
           </div>
-          <div className="p-3 max-h-48 overflow-y-auto bg-white">
-            {aiResponse ? (
-              <pre className="text-xs sm:text-sm font-mono whitespace-pre-wrap break-words text-gray-800">
-                {aiResponse}
-              </pre>
+          <div className="p-4 max-h-40 overflow-y-auto bg-white space-y-3">
+            {prompt && aiResponse ? (
+              <>
+                {/* User Message */}
+                <div className="flex flex-col justify-start items-start gap-1">
+                  <span className="text-xs text-gray-500 font-semibold">PROMPT</span>
+                  <div className="w-full bg-gray-50 text-gray-900 rounded-lg px-3 py-2 border border-gray-200">
+                    <p className="text-xs sm:text-sm whitespace-pre-wrap break-words">{prompt}</p>
+                  </div>
+                </div>
+                {/* Assistant Message */}
+                <div className="flex flex-col justify-start items-start gap-1">
+                  <span className="text-xs text-gray-500 font-semibold">{solveStats?.modelName || 'AI'}</span>
+                  <div className="w-full bg-gray-50 text-gray-900 rounded-lg px-3 py-2 border border-gray-200">
+                    <pre className="text-xs sm:text-sm font-mono whitespace-pre-wrap break-words">{aiResponse}</pre>
+                  </div>
+                </div>
+              </>
             ) : (
               <p className="text-xs sm:text-sm text-gray-600 italic">
-                Click "AUTO SOLVE" to see the AI's response here...
+                Click "AUTO SOLVE" to see the conversation here...
               </p>
             )}
           </div>
