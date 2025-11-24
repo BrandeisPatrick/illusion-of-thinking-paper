@@ -237,7 +237,7 @@ const App: React.FC = () => {
             ILLUSION OF<br className="hidden sm:block"/> THINKING
           </h1>
           <a
-            href="https://arxiv.org/abs/2506.08858"
+            href="https://machinelearning.apple.com/research/illusion-of-thinking"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 transition-colors"
