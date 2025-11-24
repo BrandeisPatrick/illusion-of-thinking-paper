@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Initialize OpenAI client (no dangerouslyAllowBrowser needed on server)
-    const client = new OpenAI({ apiKey });
+    const client = new OpenAI({ apiKey, timeout: 180000 });
 
     const prompt = `Solve the Tower of Hanoi puzzle with ${numDisks} disks.
 
@@ -71,13 +71,13 @@ Now output all moves for ${numDisks} disks. Start immediately with the first mov
           content: prompt,
         },
       ],
-      max_completion_tokens: 65536,
+      max_completion_tokens: 8192,
     };
 
     // GPT-5 models require temperature: 1, others use 0.7
     if (isGPT5) {
       params.temperature = 1;
-      params.reasoning_effort = useReasoning ? 'high' : 'minimal';
+      params.reasoning_effort = useReasoning ? 'medium' : 'minimal';
     } else {
       params.temperature = 0.7;
     }
