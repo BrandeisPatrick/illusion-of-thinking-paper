@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Info } from 'lucide-react';
 import { RodComponent } from './components/RodComponent';
 import { createInitialState, canMoveDisk, checkWinCondition } from './utils/gameLogic';
 import { GameState, RodId, Move } from './types';
@@ -232,10 +232,19 @@ const App: React.FC = () => {
       
       {/* Compact Header for Mobile */}
       <header className="w-full max-w-3xl flex flex-row justify-between items-center mb-2 gap-2 border-b-4 border-black pb-2 sm:mb-6 sm:pb-6">
-        <div className="text-left flex items-center">
+        <div className="text-left flex items-center gap-2">
           <h1 className="font-pixel text-lg sm:text-3xl md:text-4xl leading-none sm:leading-tight tracking-tighter" style={{ textShadow: '2px 2px 0px #ddd' }}>
-            PIXEL<br className="hidden sm:block"/>HANOI
+            ILLUSION OF<br className="hidden sm:block"/> THINKING
           </h1>
+          <a
+            href="https://arxiv.org/abs/2506.08858"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 transition-colors"
+            title="Read the paper"
+          >
+            <Info size={24} className="sm:w-8 sm:h-8" />
+          </a>
         </div>
 
         <div className="flex items-stretch gap-0 bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-pixel rounded-lg overflow-hidden">
