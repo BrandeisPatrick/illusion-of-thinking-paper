@@ -35,18 +35,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const prompt = `Solve the Tower of Hanoi puzzle with ${numDisks} disks.
 
-IMPORTANT CONSTRAINTS:
+RULES:
 - There are exactly 3 rods labeled: A, B, and C
 - All disks start on rod A
 - Goal: Move all disks to rod C
-- You can only use rods A, B, or C (no other rod labels exist)
+- Only use rods A, B, or C
 
-Return ONLY the moves, one per line, in this exact format:
+OUTPUT REQUIREMENTS - CRITICAL:
+- Output ONLY the moves, nothing else
+- Do NOT provide explanations, commentary, or questions
+- Do NOT ask about list length or whether to print the list
+- Do NOT ask any clarifying questions
+- Do NOT write anything except the moves
+- Output one move per line in this exact format: A→C
+
+EXAMPLE OUTPUT (for 3 disks):
 A→C
 A→B
-C→B
+C→A
+A→C
+B→C
+B→A
+C→A
 
-Do not use any rod labels other than A, B, or C.`;
+Now output all moves for ${numDisks} disks. Start immediately with the first move.`;
 
     // Check if this is a GPT-5 model (supports reasoning_effort)
     const isGPT5 = modelId.includes('gpt-5');
@@ -110,7 +122,8 @@ Do not use any rod labels other than A, B, or C.`;
       moves,
       usage,
       modelName: modelId,
-      rawResponse: content
+      rawResponse: content,
+      prompt
     });
   } catch (error: any) {
     console.error('Error solving Tower of Hanoi:', error);
