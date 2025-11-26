@@ -1,7 +1,3 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
-
 # The Illusion of Thinking
 
 An interactive demo exploring how AI reasoning models fail at the Tower of Hanoi puzzle. Based on Apple's research paper on the limitations of extended thinking in large language models.
