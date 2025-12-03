@@ -31,8 +31,8 @@ This demo is based on [Apple's research paper](https://machinelearning.apple.com
 
 ## Results at a Glance
 
-| Difficulty | Disks | Optimal Moves | o3-mini | o4-mini | o3 |
-|:----------:|:-----:|:-------------:|:-------:|:-------:|:--:|
+| Difficulty | Disks | Optimal Moves | GPT-5 Nano | GPT-5 Mini | GPT-5.1 |
+|:----------:|:-----:|:-------------:|:----------:|:----------:|:-------:|
 | Easy | 4 | 15 | Thinking OFF | Thinking OFF | Thinking OFF |
 | | | | 15 moves | 15 moves | 23 moves |
 | | | | Correct | Correct | Incorrect |
@@ -54,7 +54,7 @@ This demo is based on [Apple's research paper](https://machinelearning.apple.com
 ## Features
 
 - Interactive Tower of Hanoi puzzle with drag-and-drop
-- Pre-cached responses from **o3-mini**, **o4-mini**, and **o3**
+- Pre-cached responses from **GPT-5 Nano**, **GPT-5 Mini**, and **GPT-5.1**
 - Toggle reasoning **ON/OFF** to compare performance
 - Real-time stats: token usage, reasoning tokens, inference time
 - Adjustable playback speed: 1x, 5x, 10x, 20x
