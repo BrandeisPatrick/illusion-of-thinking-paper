@@ -1,13 +1,17 @@
 <div align="center">
 
-# The Illusion of Thinking
+<!-- Banner with gradient background -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=200&section=header&text=The%20Illusion%20of%20Thinking&fontSize=42&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Can%20AI%20models%20truly%20%22reason%22%20through%20complex%20problems?&descSize=18&descAlignY=55" width="100%"/>
 
-### Can AI models truly "reason" through complex problems?
+<br/>
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-blue?style=for-the-badge)](https://brandeispatrick.github.io/illusion-of-thinking-paper/)
-[![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript)](https://typescriptlang.org)
-[![Vite](https://img.shields.io/badge/Vite-6-646cff?style=flat-square&logo=vite)](https://vitejs.dev)
+
+<p>
+  <img src="https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Vite-6-646cff?style=flat-square&logo=vite" alt="Vite"/>
+</p>
 
 *An interactive demo exploring the limits of AI reasoning on algorithmic tasks*
 
@@ -27,8 +31,8 @@ This demo is based on [Apple's research paper](https://machinelearning.apple.com
 
 ## Results at a Glance
 
-| Difficulty | Disks | Optimal Moves | GPT-5 Nano | GPT-5 Mini | GPT-5.1 |
-|:----------:|:-----:|:-------------:|:----------:|:----------:|:-------:|
+| Difficulty | Disks | Optimal Moves | o3-mini | o4-mini | o3 |
+|:----------:|:-----:|:-------------:|:-------:|:-------:|:--:|
 | Easy | 4 | 15 | Thinking OFF | Thinking OFF | Thinking OFF |
 | | | | 15 moves | 15 moves | 23 moves |
 | | | | Correct | Correct | Incorrect |
@@ -50,7 +54,7 @@ This demo is based on [Apple's research paper](https://machinelearning.apple.com
 ## Features
 
 - Interactive Tower of Hanoi puzzle with drag-and-drop
-- Pre-cached responses from **GPT-5 Nano**, **GPT-5 Mini**, and **GPT-5.1**
+- Pre-cached responses from **o3-mini**, **o4-mini**, and **o3**
 - Toggle reasoning **ON/OFF** to compare performance
 - Real-time stats: token usage, reasoning tokens, inference time
 - Adjustable playback speed: 1x, 5x, 10x, 20x
@@ -77,7 +81,7 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## How It Works
 
-This demo uses **pre-cached responses** from OpenAI's GPT-5 models. No API key needed!
+This demo uses **pre-cached responses** from OpenAI's reasoning models. No API key needed!
 
 All 18 combinations (3 models x 3 difficulties x 2 thinking modes) have been pre-generated with:
 
@@ -115,6 +119,8 @@ This makes it perfect for testing whether AI "reasoning" is genuine problem-solv
 ---
 
 <div align="center">
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=100&section=footer" width="100%"/>
 
 **[Try the Live Demo](https://brandeispatrick.github.io/illusion-of-thinking-paper/)**
 

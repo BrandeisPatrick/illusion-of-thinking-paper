@@ -42,7 +42,10 @@
       "Bash(node:*)",
       "Bash(/tmp/nano-test.json)",
       "Bash(echo:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(git remote get-url:*)",
+      "Bash(gh repo edit:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
