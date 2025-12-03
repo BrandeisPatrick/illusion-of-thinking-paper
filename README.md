@@ -31,23 +31,54 @@ This demo is based on [Apple's research paper](https://machinelearning.apple.com
 
 ## Results at a Glance
 
-| Difficulty | Disks | Optimal Moves | GPT-5 Nano | GPT-5 Mini | GPT-5.1 |
-|:----------:|:-----:|:-------------:|:----------:|:----------:|:-------:|
-| Easy | 4 | 15 | Thinking OFF | Thinking OFF | Thinking OFF |
-| | | | 15 moves | 15 moves | 23 moves |
-| | | | Correct | Correct | Incorrect |
-| Medium | 7 | 127 | Thinking ON | Thinking ON | Thinking ON |
-| | | | 0 moves | 127 moves | 127 moves |
-| | | | Failed | Correct | Correct |
-| Hard | 10 | 1,023 | Thinking ON | Thinking ON | Thinking ON |
-| | | | 0 moves | Timeout | 523 moves |
-| | | | Failed | Failed | Failed |
+<table>
+<tr>
+<th>Difficulty</th>
+<th>Disks</th>
+<th>Optimal</th>
+<th>GPT-5 Nano</th>
+<th>GPT-5 Mini</th>
+<th>GPT-5.1</th>
+</tr>
+<tr>
+<td align="center">🟢 <b>Easy</b></td>
+<td align="center">4</td>
+<td align="center">15</td>
+<td align="center"><img src="https://img.shields.io/badge/15_moves-success-brightgreen"/></td>
+<td align="center"><img src="https://img.shields.io/badge/15_moves-success-brightgreen"/></td>
+<td align="center"><img src="https://img.shields.io/badge/23_moves-failed-red"/></td>
+</tr>
+<tr>
+<td align="center">🟡 <b>Medium</b></td>
+<td align="center">7</td>
+<td align="center">127</td>
+<td align="center"><img src="https://img.shields.io/badge/0_moves-failed-red"/></td>
+<td align="center"><img src="https://img.shields.io/badge/127_moves-success-brightgreen"/></td>
+<td align="center"><img src="https://img.shields.io/badge/127_moves-success-brightgreen"/></td>
+</tr>
+<tr>
+<td align="center">🔴 <b>Hard</b></td>
+<td align="center">10</td>
+<td align="center">1,023</td>
+<td align="center"><img src="https://img.shields.io/badge/0_moves-failed-red"/></td>
+<td align="center"><img src="https://img.shields.io/badge/timeout-failed-red"/></td>
+<td align="center"><img src="https://img.shields.io/badge/523_moves-failed-red"/></td>
+</tr>
+</table>
 
-### Key Observations
+<br/>
 
-- **Easy puzzles (4 disks)**: Most models succeed without thinking
-- **Medium puzzles (7 disks)**: Only larger models with thinking enabled succeed
-- **Hard puzzles (10 disks)**: **ALL models fail** - even with maximum reasoning effort
+> 🎯 **The Pattern**: Easy tasks work. Hard tasks fail. **No amount of "thinking" helps.**
+
+### Key Takeaway
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  📊 Easy (4 disks)    →  Most models pass without thinking  │
+│  📊 Medium (7 disks)  →  Only large models + thinking pass  │
+│  📊 Hard (10 disks)   →  ALL models fail, always            │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
